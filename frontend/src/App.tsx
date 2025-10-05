@@ -1,11 +1,12 @@
-import { Button } from "@/components/ui/button"
+import { Calendar } from "./components/calendar";
 
 function App() {
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center">
-      <Button>Click me</Button>
+    <div className="min-h-svh flex flex-col max-w-4xl w-full mx-auto py-20">
+      <h1 className="text-2xl font-bold">Book your meeting</h1>
+      <Calendar />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
