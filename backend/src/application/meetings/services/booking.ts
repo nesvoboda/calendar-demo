@@ -1,10 +1,13 @@
+import type { Result } from "neverthrow";
 import type { Meeting, MeetingCreate } from "../../../domain/meetings/types";
-import type { IZoomAPI } from "../interfaces/zoom";
+import type { IZoomAPI, OverlapsError } from "../interfaces/zoom";
 
 export class BookingService {
   constructor(private readonly zoomAPI: IZoomAPI) {}
 
-  async createMeeting(meeting: MeetingCreate): Promise<Meeting> {
+  async createMeeting(
+    meeting: MeetingCreate
+  ): Promise<Result<Meeting, OverlapsError>> {
     return this.zoomAPI.createMeeting(meeting);
   }
 

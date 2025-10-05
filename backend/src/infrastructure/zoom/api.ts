@@ -1,5 +1,9 @@
-import type { IZoomAPI } from "../../application/meetings/interfaces/zoom";
+import type {
+  IZoomAPI,
+  OverlapsError,
+} from "../../application/meetings/interfaces/zoom";
 import type { Meeting, MeetingCreate } from "../../domain/meetings/types";
+import { ok, Result } from "neverthrow";
 
 // ZoomApi is a CJS module unfortunately
 const zoomApi = (await import("zoomapi")).default;
@@ -23,8 +27,13 @@ function createZoomClient() {
 }
 
 export class ZoomAPIImpl implements IZoomAPI {
-  async createMeeting(meeting: MeetingCreate): Promise<Meeting> {
+  async createMeeting(
+    meeting: MeetingCreate
+  ): Promise<Result<Meeting, OverlapsError>> {
     const zoomAPI = createZoomClient();
+
+    // Todo: check for overlaps
+
     const response = await zoomAPI.meetings.CreateMeeting("me", {
       topic: meeting.topic,
       start_time: meeting.startDate.toISOString(),
@@ -34,11 +43,11 @@ export class ZoomAPIImpl implements IZoomAPI {
     if (!response.uuid || !response.start_time || !response.duration) {
       throw new Error("Incorrect response from Zoom API");
     }
-    return {
+    return ok({
       id: response.uuid,
       startDate: new Date(response.start_time),
       duration: response.duration,
-    };
+    });
   }
 
   async listMeetings(): Promise<Meeting[]> {
