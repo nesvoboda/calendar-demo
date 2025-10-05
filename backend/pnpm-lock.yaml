@@ -17,6 +17,9 @@ importers:
       '@elysiajs/openapi':
         specifier: ^1.4.11
         version: 1.4.11(elysia@1.4.9(@sinclair/typebox@0.34.41)(exact-mirror@0.2.2(@sinclair/typebox@0.34.41))(openapi-types@12.1.3)(typescript@5.9.3))
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
       dotenv:
         specifier: ^17.2.3
         version: 17.2.3
@@ -244,6 +247,9 @@ packages:
     peerDependenciesMeta:
       srvx:
         optional: true
+
+  date-fns@4.1.0:
+    resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==}
 
   dotenv@17.2.3:
     resolution: {integrity: sha512-JVUnt+DUIzu87TABbhPmNfVdBDt18BLOWjMUFJMSi/Qqg7NTYtabbvSNJGOJ7afbRuv9D/lngizHtP7QyLQ+9w==}
@@ -479,6 +485,8 @@ snapshots:
   crossws@0.4.1(srvx@0.8.9):
     optionalDependencies:
       srvx: 0.8.9
+
+  date-fns@4.1.0: {}
 
   dotenv@17.2.3: {}
 
