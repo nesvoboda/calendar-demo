@@ -11,7 +11,6 @@ import {
 } from "date-fns";
 import { Button } from "./ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
 import clsx from "clsx";
 
 export function Calendar() {
