@@ -4,6 +4,9 @@ import meetingsApi from "./presentation/meetings/api";
 import { openapi } from "@elysiajs/openapi";
 import { cors } from "@elysiajs/cors";
 
+// Setup dotenv
+import "dotenv/config";
+
 const app = new Elysia({ adapter: node() })
   .use(openapi())
   .use(
