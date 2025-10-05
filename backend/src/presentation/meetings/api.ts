@@ -34,14 +34,14 @@ export class MeetingAPI {
       // Create a meeting
       .post(
         "/",
-        async ({ body }) => {
+        async ({ body, status }) => {
           const result = await this.bookingService.createMeeting(
             apiMeetingCreateToDomain(body)
           );
           if (result.isErr()) {
-            return {
+            return status(400, {
               message: result.error.message,
-            };
+            });
           }
           return domainMeetingToApiMeeting(result.value);
         },

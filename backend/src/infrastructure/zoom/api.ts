@@ -32,8 +32,6 @@ export class ZoomAPIImpl implements IZoomAPI {
   ): Promise<Result<Meeting, OverlapsError>> {
     const zoomAPI = createZoomClient();
 
-    // Todo: check for overlaps
-
     const response = await zoomAPI.meetings.CreateMeeting("me", {
       topic: meeting.topic,
       start_time: meeting.startDate.toISOString(),
