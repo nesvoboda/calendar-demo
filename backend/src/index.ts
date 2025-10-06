@@ -16,7 +16,7 @@ const app = new Elysia({ adapter: node() })
   .use(openapi())
   .use(
     cors({
-      origin: "*", // TODO: Change to the actual origin
+      origin: "https://ash-calendar-demo.netlify.app/",
     })
   )
   .use(meetingAPI)
