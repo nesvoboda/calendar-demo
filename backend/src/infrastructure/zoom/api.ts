@@ -10,11 +10,13 @@ import type {
 import { ok, Result } from "neverthrow";
 
 import { v5 as uuidv5 } from "uuid";
+import { createRequire } from "module";
 
 // ZoomApi is a CJS module unfortunately
+const require = createRequire(import.meta.url);
+const zoomApi = require("zoomapi").default;
 
-
-function createZoomClient() {
+async function createZoomClient() {
   if (
     !process.env.ZOOM_ACCOUNT_ID ||
     !process.env.ZOOM_CLIENT_ID ||
@@ -38,7 +40,7 @@ export class ZoomAPIImpl implements IZoomAPI {
   async createMeeting(
     meeting: MeetingCreate
   ): Promise<Result<CreatedMeeting, OverlapsError>> {
-    const zoomAPI = createZoomClient();
+    const zoomAPI = await createZoomClient();
 
     const response = await zoomAPI.meetings.CreateMeeting("me", {
       topic: meeting.topic,
@@ -63,9 +65,9 @@ export class ZoomAPIImpl implements IZoomAPI {
   }
 
   async listMeetings(): Promise<Meeting[]> {
-    const zoomAPI = createZoomClient();
+    const zoomAPI = await createZoomClient();
     const response = await zoomAPI.meetings.ListMeetings("me");
-    return response.meetings.map((meeting) => {
+    return response.meetings.map((meeting: any) => {
       if (!meeting.uuid || !meeting.start_time || !meeting.duration) {
         throw new Error("Incorrect response from Zoom API");
       }
