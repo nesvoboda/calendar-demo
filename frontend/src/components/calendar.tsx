@@ -80,25 +80,30 @@ export function Week({ selectedDate }: { selectedDate: Date }) {
 }
 
 export function Day({ date }: { date: Date }) {
-  const { pendingMeeting, dragging, mouseHandlers } = useDragAndDrop();
+  const { pendingMeeting, dragging, mouseHandlers, DnDWrapper } =
+    useDragAndDrop({ selectedDate: date });
 
   return (
-    <div className="flex-1">
-      <div className="flex flex-col h-full">
-        <div className="flex flex-col h-12">
-          <p className="text-sm">{format(date, "EEEE")}</p>
-          <p className="text-xs">{format(date, "MMMM d")}</p>
-        </div>
+    <DnDWrapper>
+      <div className="flex-1">
+        <div className="flex flex-col h-full">
+          <div className="flex flex-col h-12">
+            <p className="text-sm">{format(date, "EEEE")}</p>
+            <p className="text-xs">{format(date, "MMMM d")}</p>
+          </div>
 
-        <div className="flex flex-col h-full relative" {...mouseHandlers}>
-          {Array.from({ length: 24 }).map((_, index) => (
-            <Hour key={index} startOfHour={addHours(date, index)} />
-          ))}
+          <div className="flex flex-col h-full relative" {...mouseHandlers}>
+            {Array.from({ length: 24 }).map((_, index) => (
+              <Hour key={index} startOfHour={addHours(date, index)} />
+            ))}
 
-          {pendingMeeting && <PendingMeeting pendingMeeting={pendingMeeting} />}
+            {pendingMeeting && (
+              <PendingMeeting pendingMeeting={pendingMeeting} />
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </DnDWrapper>
   );
 }
 
