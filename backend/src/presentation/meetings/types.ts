@@ -32,7 +32,7 @@ export function domainMeetingToApiMeeting(
 }
 
 export const MeetingCreateSchema = t.Object({
-  topic: t.String(),
+  topic: t.String({ minLength: 1, maxLength: 200 }),
   startDate: t.String({ format: "date-time" }),
   duration: t.Number(),
 });

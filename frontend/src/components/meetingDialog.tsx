@@ -83,6 +83,9 @@ export function MeetingCreateDialog({
           <Button
             onClick={(e) => {
               e.preventDefault();
+              if (!isTitleValid(topic)) {
+                return;
+              }
               setLoading(true);
               createMeeting(
                 {
@@ -142,4 +145,16 @@ export function MeetingCreateDialog({
       </AlertDialogContent>
     </AlertDialog>
   );
+}
+
+function isTitleValid(title: string) {
+  if (title.length === 0) {
+    toast.error("Title has to be at least 1 character");
+    return false;
+  }
+  if (title.length > 200) {
+    toast.error("Title has to be less than 200 characters");
+    return false;
+  }
+  return true;
 }
