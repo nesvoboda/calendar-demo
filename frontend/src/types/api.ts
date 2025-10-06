@@ -100,6 +100,7 @@ export interface operations {
                         /** Format: date-time */
                         startDate: string;
                         duration: number;
+                        joinLink: string;
                     };
                 };
             };
