@@ -91,6 +91,8 @@ export function useDragAndDrop({ selectedDate }: { selectedDate: Date }) {
         open={open}
         setOpen={setOpen}
         candidateMeeting={candidateMeeting}
+        setPendingMeeting={setPendingMeeting}
+        setCandidateMeeting={setCandidateMeeting}
       >
         {children}
       </MeetingCreateDialog>
@@ -142,11 +144,15 @@ export function MeetingCreateDialog({
   open,
   setOpen,
   candidateMeeting,
+  setPendingMeeting,
+  setCandidateMeeting,
   children,
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
   candidateMeeting: CandidateMeeting | null;
+  setPendingMeeting: (pendingMeeting: PendingMeeting | null) => void;
+  setCandidateMeeting: (candidateMeeting: CandidateMeeting | null) => void;
   children: React.ReactNode;
 }) {
   if (!candidateMeeting) return children;
@@ -173,7 +179,15 @@ export function MeetingCreateDialog({
           <Input type="text" />
         </div>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel
+            onClick={() => {
+              setOpen(false);
+              setPendingMeeting(null);
+              setCandidateMeeting(null);
+            }}
+          >
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction>Book</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
