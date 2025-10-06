@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, useEffect } from "react";
 import {
   startOfWeek,
   endOfWeek,
@@ -87,6 +87,24 @@ export function Day({ date }: { date: Date }) {
   });
 
   const dayRef = useRef<HTMLDivElement>(null);
+  const [dayHeight, setDayHeight] = useState(600); // Default height
+
+  const updateHeight = () => {
+    if (dayRef.current) {
+      setDayHeight(dayRef.current.clientHeight);
+    }
+  };
+  addEventListener("resize", updateHeight);
+  // Update dayHeight when the ref becomes available or changes
+  useEffect(() => {
+    // Initial update
+    updateHeight();
+
+    return () => {
+      removeEventListener("resize", updateHeight);
+    };
+  }, []); // Re-run when date changes (new week)
+
   return (
     <DnDWrapper>
       <div className="flex-1">
@@ -108,7 +126,7 @@ export function Day({ date }: { date: Date }) {
             {pendingMeeting && (
               <PendingMeeting pendingMeeting={pendingMeeting} />
             )}
-            <Blockers currentDate={date} dayRef={dayRef} />
+            <Blockers currentDate={date} dayHeight={dayHeight} />
           </div>
         </div>
       </div>
@@ -118,10 +136,10 @@ export function Day({ date }: { date: Date }) {
 
 function Blockers({
   currentDate,
-  dayRef,
+  dayHeight,
 }: {
   currentDate: Date;
-  dayRef: React.RefObject<HTMLDivElement | null>;
+  dayHeight: number;
 }) {
   const { data: meetings } = useMeetings();
 
@@ -131,8 +149,6 @@ function Blockers({
     );
   }, [meetings, currentDate]);
 
-  if (!dayRef.current) return null;
-  const dayHeight = dayRef.current.clientHeight;
   return (
     <div>
       {meetingsForDay?.map((meeting) => (

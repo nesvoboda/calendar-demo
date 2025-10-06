@@ -9,6 +9,11 @@ import { BookingService } from "./application/meetings/services/booking";
 // Setup dotenv
 import "dotenv/config";
 
+const frontendUrl =
+  process.env.NODE_ENV === "production"
+    ? "https://ash-calendar-demo.netlify.app/"
+    : "http://localhost:5173";
+
 const bookingService = new BookingService(new ZoomAPIImpl());
 const meetingAPI = new MeetingAPI(bookingService).createAPI();
 
@@ -16,7 +21,7 @@ const app = new Elysia({ adapter: node() })
   .use(openapi())
   .use(
     cors({
-      origin: "ash-calendar-demo.netlify.app",
+      origin: frontendUrl,
     })
   )
   .use(meetingAPI)
