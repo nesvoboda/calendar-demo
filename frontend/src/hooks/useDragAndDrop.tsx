@@ -13,6 +13,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useCreateMeeting } from "./useMeetings";
+import { useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
 
 export interface PendingMeeting {
   startY: number;
@@ -145,19 +148,21 @@ export function MeetingCreateDialog({
   setOpen,
   candidateMeeting,
   setPendingMeeting,
-  setCandidateMeeting,
   children,
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
   candidateMeeting: CandidateMeeting | null;
   setPendingMeeting: (pendingMeeting: PendingMeeting | null) => void;
-  setCandidateMeeting: (candidateMeeting: CandidateMeeting | null) => void;
   children: React.ReactNode;
 }) {
   if (!candidateMeeting) return children;
 
+  const [topic, setTopic] = useState("");
+
   const endDate = addMinutes(candidateMeeting.date, candidateMeeting.duration);
+  const { mutate: createMeeting } = useCreateMeeting();
+  const queryClient = useQueryClient();
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -165,9 +170,9 @@ export function MeetingCreateDialog({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Book a meeting</AlertDialogTitle>
-          <AlertDialogDescription>
-            You are booking a meeting for the following time:
+          <AlertDialogDescription asChild>
             <p>
+              You are booking a meeting for the following time:
               {format(candidateMeeting?.date, "EEEE, MMMM d, yyyy")} from{" "}
               {format(candidateMeeting.date, "HH:mm")} to{" "}
               {format(endDate, "HH:mm")}
@@ -176,19 +181,42 @@ export function MeetingCreateDialog({
         </AlertDialogHeader>
         <div className="flex flex-col gap-2">
           <Label>Topic</Label>
-          <Input type="text" />
+          <Input
+            type="text"
+            value={topic}
+            onChange={(e) => setTopic(e.target.value)}
+          />
         </div>
         <AlertDialogFooter>
           <AlertDialogCancel
             onClick={() => {
               setOpen(false);
               setPendingMeeting(null);
-              setCandidateMeeting(null);
             }}
           >
             Cancel
           </AlertDialogCancel>
-          <AlertDialogAction>Book</AlertDialogAction>
+          <Button
+            onClick={(e) => {
+              e.preventDefault();
+              createMeeting(
+                {
+                  topic: topic,
+                  startDate: candidateMeeting.date.toISOString(),
+                  duration: candidateMeeting.duration,
+                },
+                {
+                  onSettled: () => {
+                    queryClient.invalidateQueries({ queryKey: ["meetings"] });
+                    setPendingMeeting(null);
+                    setOpen(false);
+                  },
+                }
+              );
+            }}
+          >
+            Book
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

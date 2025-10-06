@@ -131,11 +131,8 @@ function Blockers({
     );
   }, [meetings, currentDate]);
 
-  console.log(meetings);
-
   if (!dayRef.current) return null;
   const dayHeight = dayRef.current.clientHeight;
-  console.log(dayHeight);
   return (
     <div>
       {meetingsForDay?.map((meeting) => (
@@ -153,7 +150,6 @@ function Blocker({
   dayHeight: number;
 }) {
   const minuteHeight = dayHeight / (60 * 24);
-  console.log("minuteHeight", minuteHeight);
   const meetingDate = new Date(meeting.startDate);
 
   return (

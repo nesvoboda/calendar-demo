@@ -20,6 +20,7 @@ export const useMeetings = () => {
         },
       });
       if (error) {
+        console.error(error);
         throw error;
       }
       return data.meetings;
@@ -34,6 +35,7 @@ export const useCreateMeeting = () => {
         body: meeting,
       });
       if (error) {
+        console.error(error);
         throw error;
       }
       return data;
