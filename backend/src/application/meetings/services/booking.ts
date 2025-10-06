@@ -1,5 +1,9 @@
 import { err, type Result } from "neverthrow";
-import type { Meeting, MeetingCreate } from "../../../domain/meetings/types";
+import type {
+  CreatedMeeting,
+  Meeting,
+  MeetingCreate,
+} from "../../../domain/meetings/types";
 import { OverlapsError, type IZoomAPI } from "../interfaces/zoom";
 import {
   addMinutes,
@@ -12,7 +16,7 @@ export class BookingService {
 
   async createMeeting(
     meeting: MeetingCreate
-  ): Promise<Result<Meeting, OverlapsError>> {
+  ): Promise<Result<CreatedMeeting, OverlapsError>> {
     const meetings = await this.listMeetings();
     const intervals = meetings.map((m) =>
       interval(m.startDate, addMinutes(m.startDate, m.duration))

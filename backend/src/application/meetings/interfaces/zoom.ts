@@ -1,5 +1,9 @@
 import type { Result } from "neverthrow";
-import type { Meeting, MeetingCreate } from "../../../domain/meetings/types";
+import type {
+  CreatedMeeting,
+  Meeting,
+  MeetingCreate,
+} from "../../../domain/meetings/types";
 
 export class OverlapsError extends Error {
   constructor(message: string) {
@@ -11,6 +15,6 @@ export class OverlapsError extends Error {
 export interface IZoomAPI {
   createMeeting(
     meeting: MeetingCreate
-  ): Promise<Result<Meeting, OverlapsError>>;
+  ): Promise<Result<CreatedMeeting, OverlapsError>>;
   listMeetings(): Promise<Meeting[]>;
 }

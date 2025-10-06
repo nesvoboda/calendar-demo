@@ -2,8 +2,9 @@ import { Elysia, t } from "elysia";
 import type { BookingService } from "../../application/meetings/services/booking";
 import {
   apiMeetingCreateToDomain,
-  ApiMeetingSchema,
+  CreatedMeetingSchema,
   domainMeetingToApiMeeting,
+  domainMeetingToCreatedMeeting,
   ListMeetingsResponseSchema,
   MeetingCreateSchema,
 } from "./types";
@@ -43,12 +44,12 @@ export class MeetingAPI {
               message: result.error.message,
             });
           }
-          return domainMeetingToApiMeeting(result.value);
+          return domainMeetingToCreatedMeeting(result.value);
         },
         {
           body: MeetingCreateSchema,
           response: {
-            200: ApiMeetingSchema,
+            200: CreatedMeetingSchema,
             400: t.Object({
               message: t.String(),
             }),
