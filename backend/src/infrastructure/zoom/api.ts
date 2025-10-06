@@ -12,7 +12,7 @@ import { ok, Result } from "neverthrow";
 import { v5 as uuidv5 } from "uuid";
 
 // ZoomApi is a CJS module unfortunately
-const zoomApi = (await import("zoomapi")).default;
+
 
 function createZoomClient() {
   if (

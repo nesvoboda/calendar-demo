@@ -21,7 +21,7 @@
 	},
 	"scripts": {
 		"dev": "tsx watch src/index.ts",
-		"build": "tsdown src/index.ts -d api --dts",
+		"build": "tsdown src/index.ts --outDir dist --format esm",
 		"start": "NODE_ENV=production node dist/index.js"
 	}
 }
