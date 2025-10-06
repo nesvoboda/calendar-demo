@@ -8,6 +8,9 @@ import {
   addWeeks,
   addHours,
   isAfter,
+  isSameHour,
+  getMinutes,
+  subHours,
 } from "date-fns";
 import { Button } from "./ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -95,13 +98,26 @@ export function Day({ date }: { date: Date }) {
 }
 
 export function Hour({ startOfHour }: { startOfHour: Date }) {
-  const bookable = isAfter(startOfHour, new Date());
+  const bookable = isAfter(startOfHour, subHours(new Date(), 1));
   return (
     <div
       className={clsx(
-        "flex-1 bg-gray-100 border-b border-r border-gray-200",
+        "flex-1 bg-gray-100 border-b border-r relative border-gray-200",
         bookable && "bg-green-50"
       )}
+    >
+      {isSameHour(startOfHour, new Date()) && <Cursor />}
+    </div>
+  );
+}
+
+function Cursor() {
+  const minutes = getMinutes(new Date());
+
+  return (
+    <div
+      className="absolute top-0 left-0 w-full h-full border-b-2 bg-gray-100 border-red-400"
+      style={{ height: `${(100 / 60) * minutes}%` }}
     ></div>
   );
 }
