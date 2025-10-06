@@ -110,7 +110,7 @@ export function MeetingCreateDialog({
                     setLoading(false);
                     setOpen(false);
                   },
-                  onSuccess: () => {
+                  onSuccess: (response) => {
                     queryClient.invalidateQueries({ queryKey: ["meetings"] });
                     setPendingMeeting(null);
                     toast.success("Meeting booked successfully", {
@@ -125,9 +125,7 @@ export function MeetingCreateDialog({
                       action: {
                         label: "Copy meeting link",
                         onClick: () => {
-                          navigator.clipboard.writeText(
-                            `https://zoom.us/meeting/lol`
-                          );
+                          navigator.clipboard.writeText(response.joinLink);
                           toast.success("Meeting link copied to clipboard");
                         },
                       },
