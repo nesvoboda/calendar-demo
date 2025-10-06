@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   startOfWeek,
   endOfWeek,
@@ -11,11 +11,14 @@ import {
   isSameHour,
   getMinutes,
   subHours,
+  isWithinInterval,
+  isSameDay,
 } from "date-fns";
 import { Button } from "./ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import clsx from "clsx";
 import { useDragAndDrop, type PendingMeeting } from "@/hooks/useDragAndDrop";
+import { useMeetings, type Meeting } from "@/hooks/useMeetings";
 
 export function Calendar() {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -83,6 +86,7 @@ export function Day({ date }: { date: Date }) {
   const { pendingMeeting, dragging, mouseHandlers, DnDWrapper } =
     useDragAndDrop({ selectedDate: date });
 
+  const dayRef = useRef<HTMLDivElement>(null);
   return (
     <DnDWrapper>
       <div className="flex-1">
@@ -92,7 +96,11 @@ export function Day({ date }: { date: Date }) {
             <p className="text-xs">{format(date, "MMMM d")}</p>
           </div>
 
-          <div className="flex flex-col h-full relative" {...mouseHandlers}>
+          <div
+            className="flex flex-col h-full relative"
+            {...mouseHandlers}
+            ref={dayRef}
+          >
             {Array.from({ length: 24 }).map((_, index) => (
               <Hour key={index} startOfHour={addHours(date, index)} />
             ))}
@@ -100,10 +108,66 @@ export function Day({ date }: { date: Date }) {
             {pendingMeeting && (
               <PendingMeeting pendingMeeting={pendingMeeting} />
             )}
+            <Blockers currentDate={date} dayRef={dayRef} />
           </div>
         </div>
       </div>
     </DnDWrapper>
+  );
+}
+
+function Blockers({
+  currentDate,
+  dayRef,
+}: {
+  currentDate: Date;
+  dayRef: React.RefObject<HTMLDivElement | null>;
+}) {
+  const { data: meetings } = useMeetings();
+
+  const meetingsForDay = useMemo(() => {
+    return meetings?.filter((meeting) =>
+      isSameDay(meeting.startDate, currentDate)
+    );
+  }, [meetings, currentDate]);
+
+  console.log(meetings);
+
+  if (!dayRef.current) return null;
+  const dayHeight = dayRef.current.clientHeight;
+  console.log(dayHeight);
+  return (
+    <div>
+      {meetingsForDay?.map((meeting) => (
+        <Blocker key={meeting.id} meeting={meeting} dayHeight={dayHeight} />
+      ))}
+    </div>
+  );
+}
+
+function Blocker({
+  meeting,
+  dayHeight,
+}: {
+  meeting: Meeting;
+  dayHeight: number;
+}) {
+  const minuteHeight = dayHeight / (60 * 24);
+  console.log("minuteHeight", minuteHeight);
+  const meetingDate = new Date(meeting.startDate);
+
+  return (
+    <div
+      className="absolute bg-gray-200"
+      style={{
+        height: `${meeting.duration * minuteHeight}px`,
+        width: "100%",
+        top: `${
+          meetingDate.getHours() * 60 * minuteHeight +
+          meetingDate.getMinutes() * minuteHeight
+        }px`,
+      }}
+    ></div>
   );
 }
 

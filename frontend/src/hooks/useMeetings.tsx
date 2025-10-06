@@ -10,7 +10,7 @@ export type Meeting =
 export type MeetingCreate =
   paths["/meetings/"]["post"]["requestBody"]["content"]["application/json"];
 
-const useMeetings = () => {
+export const useMeetings = () => {
   return useQuery({
     queryKey: ["meetings"],
     queryFn: async () => {
@@ -27,7 +27,7 @@ const useMeetings = () => {
   });
 };
 
-const useCreateMeeting = () => {
+export const useCreateMeeting = () => {
   return useMutation({
     mutationFn: async (meeting: MeetingCreate) => {
       const { data, error } = await client.POST("/meetings/", {
