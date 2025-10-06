@@ -1,30 +1,14 @@
 import { useState } from "react";
 
-import { addMinutes, differenceInMinutes, format, isAfter } from "date-fns";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import { addMinutes, differenceInMinutes, isAfter } from "date-fns";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogDescription,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { useCreateMeeting } from "./useMeetings";
-import { useQueryClient } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
+  MeetingCreateDialog,
+  type CandidateMeeting,
+} from "@/components/meetingDialog";
 
 export interface PendingMeeting {
   startY: number;
   endY: number;
-}
-
-export interface CandidateMeeting {
-  date: Date;
-  duration: number;
 }
 
 export function useDragAndDrop({ selectedDate }: { selectedDate: Date }) {
@@ -95,7 +79,6 @@ export function useDragAndDrop({ selectedDate }: { selectedDate: Date }) {
         setOpen={setOpen}
         candidateMeeting={candidateMeeting}
         setPendingMeeting={setPendingMeeting}
-        setCandidateMeeting={setCandidateMeeting}
       >
         {children}
       </MeetingCreateDialog>
@@ -141,84 +124,4 @@ function offsetToDate(
   const yPerMiunte = dayHeight / (24 * 60);
   const minutes = offset / yPerMiunte;
   return addMinutes(currentDate, minutes);
-}
-
-export function MeetingCreateDialog({
-  open,
-  setOpen,
-  candidateMeeting,
-  setPendingMeeting,
-  children,
-}: {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  candidateMeeting: CandidateMeeting | null;
-  setPendingMeeting: (pendingMeeting: PendingMeeting | null) => void;
-  children: React.ReactNode;
-}) {
-  if (!candidateMeeting) return children;
-
-  const [topic, setTopic] = useState("");
-
-  const endDate = addMinutes(candidateMeeting.date, candidateMeeting.duration);
-  const { mutate: createMeeting } = useCreateMeeting();
-  const queryClient = useQueryClient();
-
-  return (
-    <AlertDialog open={open} onOpenChange={setOpen}>
-      {children}
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Book a meeting</AlertDialogTitle>
-          <AlertDialogDescription asChild>
-            <p>
-              You are booking a meeting for the following time:
-              {format(candidateMeeting?.date, "EEEE, MMMM d, yyyy")} from{" "}
-              {format(candidateMeeting.date, "HH:mm")} to{" "}
-              {format(endDate, "HH:mm")}
-            </p>
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <div className="flex flex-col gap-2">
-          <Label>Topic</Label>
-          <Input
-            type="text"
-            value={topic}
-            onChange={(e) => setTopic(e.target.value)}
-          />
-        </div>
-        <AlertDialogFooter>
-          <AlertDialogCancel
-            onClick={() => {
-              setOpen(false);
-              setPendingMeeting(null);
-            }}
-          >
-            Cancel
-          </AlertDialogCancel>
-          <Button
-            onClick={(e) => {
-              e.preventDefault();
-              createMeeting(
-                {
-                  topic: topic,
-                  startDate: candidateMeeting.date.toISOString(),
-                  duration: candidateMeeting.duration,
-                },
-                {
-                  onSettled: () => {
-                    queryClient.invalidateQueries({ queryKey: ["meetings"] });
-                    setPendingMeeting(null);
-                    setOpen(false);
-                  },
-                }
-              );
-            }}
-          >
-            Book
-          </Button>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
 }
