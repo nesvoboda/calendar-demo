@@ -11,7 +11,6 @@ import {
   isSameHour,
   getMinutes,
   subHours,
-  isWithinInterval,
   isSameDay,
 } from "date-fns";
 import { Button } from "./ui/button";
@@ -83,8 +82,9 @@ export function Week({ selectedDate }: { selectedDate: Date }) {
 }
 
 export function Day({ date }: { date: Date }) {
-  const { pendingMeeting, dragging, mouseHandlers, DnDWrapper } =
-    useDragAndDrop({ selectedDate: date });
+  const { pendingMeeting, mouseHandlers, DnDWrapper } = useDragAndDrop({
+    selectedDate: date,
+  });
 
   const dayRef = useRef<HTMLDivElement>(null);
   return (
