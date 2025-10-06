@@ -79,6 +79,12 @@ export function Week({ selectedDate }: { selectedDate: Date }) {
 }
 
 export function Day({ date }: { date: Date }) {
+  const [pendingMeeting, setPendingMeeting] = useState<{
+    startY: number;
+    endY: number;
+  } | null>(null);
+  const [dragging, setDragging] = useState(false);
+
   return (
     <div className="flex-1">
       <div className="flex flex-col h-full">
@@ -87,14 +93,70 @@ export function Day({ date }: { date: Date }) {
           <p className="text-xs">{format(date, "MMMM d")}</p>
         </div>
 
-        <div className="flex flex-col h-full">
+        <div
+          className="flex flex-col h-full relative"
+          onMouseDown={(e) => {
+            e.preventDefault();
+            setDragging(true);
+            const rect = e.currentTarget.getBoundingClientRect();
+            setPendingMeeting({
+              startY: snapToQuarterHour(e.clientY - rect.top, rect.height),
+              endY: snapToQuarterHour(e.clientY - rect.top, rect.height),
+            });
+          }}
+          onMouseUp={(e) => {
+            e.preventDefault();
+            setDragging(false);
+            setPendingMeeting(null);
+          }}
+          onMouseMove={(e) => {
+            e.preventDefault();
+            if (dragging) {
+              const rect = e.currentTarget.getBoundingClientRect();
+              setPendingMeeting((prev) =>
+                prev
+                  ? {
+                      startY: prev.startY,
+                      endY: snapToQuarterHour(
+                        e.clientY - rect.top,
+                        rect.height
+                      ),
+                    }
+                  : null
+              );
+            }
+          }}
+        >
           {Array.from({ length: 24 }).map((_, index) => (
             <Hour key={index} startOfHour={addHours(date, index)} />
           ))}
+
+          {pendingMeeting && (
+            <div
+              className="absolute bg-green-200"
+              style={{
+                height: `${Math.abs(
+                  pendingMeeting.endY - pendingMeeting.startY
+                )}px`,
+                top: `${Math.min(
+                  pendingMeeting.startY,
+                  pendingMeeting.endY
+                )}px`,
+                width: "100%",
+              }}
+            ></div>
+          )}
         </div>
       </div>
     </div>
   );
+}
+
+function snapToQuarterHour(y: number, dayHeight: number): number {
+  const yPerMiunte = dayHeight / (24 * 60);
+  const minutes = y / yPerMiunte;
+  const roundedMinutes = Math.round(minutes / 15) * 15;
+  return roundedMinutes * yPerMiunte;
 }
 
 export function Hour({ startOfHour }: { startOfHour: Date }) {
