@@ -9,6 +9,8 @@ import type {
 } from "../../domain/meetings/types";
 import { ok, Result } from "neverthrow";
 
+import { v5 as uuidv5 } from "uuid";
+
 // ZoomApi is a CJS module unfortunately
 const zoomApi = (await import("zoomapi")).default;
 
@@ -29,6 +31,8 @@ function createZoomClient() {
   });
   return client;
 }
+
+const namespace = crypto.randomUUID();
 
 export class ZoomAPIImpl implements IZoomAPI {
   async createMeeting(
@@ -51,7 +55,7 @@ export class ZoomAPIImpl implements IZoomAPI {
       throw new Error("Incorrect response from Zoom API");
     }
     return ok({
-      id: response.uuid,
+      id: uuidv5(response.uuid, namespace),
       startDate: new Date(response.start_time),
       duration: response.duration,
       joinLink: response.join_url,
@@ -66,7 +70,7 @@ export class ZoomAPIImpl implements IZoomAPI {
         throw new Error("Incorrect response from Zoom API");
       }
       return {
-        id: meeting.uuid,
+        id: uuidv5(meeting.uuid, namespace),
         startDate: new Date(meeting.start_time),
         duration: meeting.duration,
       };

@@ -32,6 +32,9 @@ importers:
       typebox:
         specifier: ^1.0.27
         version: 1.0.27
+      uuid:
+        specifier: ^13.0.0
+        version: 13.0.0
       zoomapi:
         specifier: ^2.3.1
         version: 2.3.1
@@ -369,6 +372,10 @@ packages:
   undici-types@7.13.0:
     resolution: {integrity: sha512-Ov2Rr9Sx+fRgagJ5AX0qvItZG/JKKoBRAVITs1zk7IqZGTJUwgUr7qoYBpWwakpWilTZFM98rG/AFRocu10iIQ==}
 
+  uuid@13.0.0:
+    resolution: {integrity: sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==}
+    hasBin: true
+
   zoomapi@2.3.1:
     resolution: {integrity: sha512-/I7iMAlNcolYWNtg4TWCieZOBBGKGl79PCrAJbXm9jeyFstkHCTUExLpBMMoz7Y8YETMSL3N7ABMwO5sNISY4g==}
     engines: {node: '>=18'}
@@ -614,6 +621,8 @@ snapshots:
   typescript@5.9.3: {}
 
   undici-types@7.13.0: {}
+
+  uuid@13.0.0: {}
 
   zoomapi@2.3.1:
     dependencies:
